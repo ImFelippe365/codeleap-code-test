@@ -8,19 +8,12 @@ interface ModifiedPost {
 }
 
 interface Props {
-    id: number,
+    initialModifiedPost: Posting,
     handleUpdatePost: (modifiedPost: Posting) => void,
     closeEditingModal: () => void;
 }
 
-function initialModifiedPost() {
-    return {
-        title: '',
-        content: ''
-    }
-}
-
-export function EditItemModal({ id, handleUpdatePost, closeEditingModal }: Props) {
+export function EditItemModal({ initialModifiedPost, handleUpdatePost, closeEditingModal }: Props) {
 
     const [modifiedPost, setModifiedPost] = useState<ModifiedPost>(initialModifiedPost);
 
@@ -40,10 +33,17 @@ export function EditItemModal({ id, handleUpdatePost, closeEditingModal }: Props
 
                 <Form
                     values={modifiedPost}
+                    showDefaultValue
                     submitPost={() => handleUpdatePost(modifiedPost)}
                     onChangeField={handleChangeFields}
                     buttonText="SAVE"
-                />
+                >
+                    <button
+                        onClick={closeEditingModal}
+                        className="px-6 py-2 bg-white border-black border-solid border-[1px] text-black text-center font-bold hover:bg-black hover:text-white">
+                        Cancel
+                    </button>
+                </Form>
             </div>
         </div>
     );

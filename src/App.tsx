@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 // Components
 import { Heading } from './components/Heading/index';
 import { Form } from './components/Form/index';
 import { DeleteAlert } from './components/DeleteAlert';
+import { EditItemModal } from './components/EditItemModal';
+import { SignIn } from './components/SignIn';
 
 // Style
 import './styles/main.css'
@@ -11,11 +14,10 @@ import './styles/main.css'
 // Icons
 import deleteIcon from './assets/icons/delete-icon.svg'
 import editIcon from './assets/icons/edit-icon.svg'
-import { SignIn } from './components/SignIn';
-import { useSelector } from 'react-redux';
+
+// Utils
 import api from './services/api';
 import timePast from './utils/timePast';
-import { EditItemModal } from './components/EditItemModal';
 
 interface PostProps {
   id: number,
@@ -33,7 +35,6 @@ export interface Posting {
 
 function initialPosting() {
   return {
-    username: '',
     title: '',
     content: ''
   }
@@ -51,33 +52,44 @@ export default function App() {
 
   const { username } = useSelector((state: any) => state);
 
+  const handleDisableScroll = () => {
+    let topScroll = window.pageYOffset || document.documentElement.scrollTop;
+    let leftScroll = window.pageXOffset || document.documentElement.scrollLeft;
+
+    window.onscroll = () => {
+      window.scrollTo(leftScroll, topScroll);
+    };
+  }
+
+  const handleActivateScroll = () => {
+    window.onscroll = () => { }
+  }
+
   const handleConfirmDeletingItem = () => {
     api.delete(`/careers/${postId}/`)
       .then((response) => {
-        console.log(response)
         closeDeleteAlert();
         getPosts();
       })
-      .catch(error => console.log("getting posts error: ", error))
   }
 
   const handleUpdatePost = (modifiedPost: Posting) => {
     api.patch(`/careers/${postId}/`, modifiedPost)
       .then(response => {
-        console.log(response);
         closeEditingModal();
         getPosts();
       })
-      .catch(error => console.log("patching error: ", error))
   }
 
-  const handleCreatePost = () => {
+  const handleCreatePost = (posting: Posting) => {
     api.post('/careers/', {
       ...posting,
       username: username,
     })
-      .then(response => console.log(response))
-      .catch(error => console.log("posting error: ", error))
+      .then(response => {
+        getPosts()
+        setPosting(initialPosting);
+      })
   }
 
   const onChangePostingFields = (name: string, value: string) => {
@@ -89,23 +101,27 @@ export default function App() {
     })
   }
 
-  const openEditingModal = (id: number) => {
-    // window.scrollTo(0, 0);
-    setPostId(id);
+  const openEditingModal = (post: PostProps) => {
+    handleDisableScroll();
+    setPosting(post);
+    setPostId(post.id);
     setShowEditingModal(true);
   }
 
   const closeEditingModal = () => {
+    handleActivateScroll();
+    setPosting(initialPosting);
     setShowEditingModal(false);
   }
 
   const openDeleteAlert = (id: number) => {
-    // window.scrollTo(0, 0);
+    handleDisableScroll()
     setPostId(id);
     setShowDeleteAlert(true);
   }
 
   const closeDeleteAlert = () => {
+    handleActivateScroll();
     setShowDeleteAlert(false);
   }
 
@@ -118,11 +134,10 @@ export default function App() {
         })
         setPosts(sortedData);
       })
-      .catch(error => console.log("getting posts error: ", error))
   }
 
   useEffect(() => {
-    getPosts();
+    return getPosts();
   }, [])
 
   if (!username) return <SignIn />
@@ -138,7 +153,7 @@ export default function App() {
       {
         showEditingModal &&
         <EditItemModal
-          id={postId}
+          initialModifiedPost={posting}
           handleUpdatePost={handleUpdatePost}
           closeEditingModal={closeEditingModal}
         />
@@ -152,8 +167,9 @@ export default function App() {
 
             <Form
               values={posting}
+              showDefaultValue={false}
               onChangeField={onChangePostingFields}
-              submitPost={handleCreatePost}
+              submitPost={() => handleCreatePost(posting)}
               buttonText='CREATE'
             />
           </div>
@@ -169,7 +185,7 @@ export default function App() {
                       post.username === username &&
                       <div className='flex flex-row items-center gap-6'>
                         <img onClick={() => openDeleteAlert(post.id)} className='w-[22px]' role={"button"} src={deleteIcon} />
-                        <img onClick={() => openEditingModal(post.id)} className='w-[30px]' role={"button"} src={editIcon} />
+                        <img onClick={() => openEditingModal(post)} className='w-[30px]' role={"button"} src={editIcon} />
                       </div>
                     }
                   </Heading>
