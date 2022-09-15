@@ -66,6 +66,7 @@ export default function App() {
       .then(response => {
         console.log(response);
         closeEditingModal();
+        getPosts();
       })
       .catch(error => console.log("patching error: ", error))
   }
@@ -89,6 +90,7 @@ export default function App() {
   }
 
   const openEditingModal = (id: number) => {
+    // window.scrollTo(0, 0);
     setPostId(id);
     setShowEditingModal(true);
   }
@@ -98,6 +100,7 @@ export default function App() {
   }
 
   const openDeleteAlert = (id: number) => {
+    // window.scrollTo(0, 0);
     setPostId(id);
     setShowDeleteAlert(true);
   }

@@ -4,9 +4,10 @@ interface Props {
 }
 
 export function DeleteAlert({ onCancel, onConfirm }: Props) {
+
     return (
         <div className="absolute w-full h-full bg-background-blur z-10 flex justify-center bg-fixed">
-            <div className="absolute w-[35%] top-[124px] z-20 bg-white px-11 py-9">
+            <div style={{ top: window.scrollY+124 }} className={`absolute w-[90%] md:w-[661px] z-20 bg-white px-11 py-9`}>
                 <h4 className="text-[22px] mb-11">Are you sure you want to delete this item?</h4>
 
                 <div className="w-full flex flex-row items-center gap-4 justify-end">

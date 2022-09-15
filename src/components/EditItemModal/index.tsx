@@ -35,7 +35,7 @@ export function EditItemModal({ id, handleUpdatePost, closeEditingModal }: Props
 
     return (
         <div className="absolute w-full h-full bg-background-blur z-10 flex justify-center bg-fixed">
-            <div className="absolute top-[10%] w-[90%] md:w-[723px] z-20 bg-white px-8 py-7">
+            <div style={{ top: window.scrollY + 300 }} className="absolute w-[90%] md:w-[723px] z-20 bg-white px-8 py-7">
                 <h1 className="text-[22px] mb-7 font-bold">Edit item</h1>
 
                 <Form
