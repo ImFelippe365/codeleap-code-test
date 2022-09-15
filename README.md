@@ -27,4 +27,4 @@ ou se preferir:
 yarn install
 ```
 
-Depois você pode utilizar ``npm run dev`` ou ``yarn run dev`` para iniciar o projeto e rodar num celular localmente.
+Depois você pode utilizar ``npm run dev`` ou ``yarn run dev`` para iniciar o projeto e rodar o site localmente.
